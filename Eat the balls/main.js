@@ -1,9 +1,16 @@
 //GLOBAL VARIABLES
 //----------------------------------------------------------------------------
 const balls = [];
+const players = [];
 let interval;
+const keys = {
+  w: false,
+  a: false,
+  s: false,
+  d: false,
+};
 
-//UI ELEMENTS
+//HTML ELEMENTS
 //----------------------------------------------------------------------------
 //selectors
 const startBtn = document.getElementById("startBtn");
@@ -24,7 +31,8 @@ startBtn.addEventListener("click", () => {
   width = canvas.width = window.innerWidth;
   height = canvas.height = window.innerHeight;
   startTimer();
-  createBalls(50);
+  createBalls(2);
+  createPlayer(width / 2, height / 2, 8, 20, 1);
   ballCounter();
   gameLoop();
 });
@@ -41,7 +49,7 @@ function startTimer() {
     if (min < 1) {
       timer.innerHTML = `Timer: ${elapsedTime.toFixed(2)}`;
     } else {
-      timer.innerHTML = `Timer: ${min}:${elapsedTime.toFixed(2)}`;
+      timer.innerHTML = `Timer: ${min}.${elapsedTime.toFixed(2)}`;
     }
     if (elapsedTime >= 60) {
       min++;
@@ -114,9 +122,62 @@ class Ball extends Shape {
     ballCounter();
   }
 }
+class Player extends Shape {
+  //constructor
+  constructor(x, y, velocityX, velocityY, color, radius, playerNumber) {
+    super(x, y, velocityX, velocityY);
+    this.color = color;
+    this.radius = radius;
+    this.playerNumber = playerNumber;
+  }
+  //methods
+  draw() {
+    ctx.beginPath();
+    ctx.fillStyle = this.color;
+    ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "white";
+    ctx.stroke();
+    ctx.closePath();
+  }
+  eatBall() {
+    for (const ball of balls) {
+      const xd = this.x - ball.x;
+      const xy = this.y - ball.y;
+      const distance = Math.sqrt(xd * xd + xy * xy);
+      if (distance < this.radius + ball.radius) {
+        ball.delete();
+        ballCounter();
+      }
+    }
+  }
+  movePlayer() {
+    if (balls.length > 0) {
+      if (keys.w) {
+        if (this.y - this.radius < 0) {
+          this.y = this.radius;
+        } else this.y -= this.velY;
+      }
+      if (keys.s)
+        if (this.y + this.radius > canvas.height) {
+          this.y = canvas.height - this.radius;
+        } else this.y += this.velY;
+      if (keys.a)
+        if (this.x - this.radius < 0) {
+          this.x = this.radius;
+        } else this.x -= this.velX;
+      if (keys.d)
+        if (this.x + this.radius > canvas.width) {
+          this.x = canvas.width - this.radius;
+        } else this.x += this.velX;
+    }
+  }
+}
 
 //GAME FUNCTIONALITY
 //----------------------------------------------------------------------------
+//calculations
 function randomNumber(min, max) {
   const num = Math.floor(Math.random() * (max - min + 1)) + min;
   return num;
@@ -124,15 +185,39 @@ function randomNumber(min, max) {
 function randomColor() {
   return `rgb(${randomNumber(0, 255)},${randomNumber(0, 255)},${randomNumber(0, 255)})`;
 }
-
+//player movement
+window.addEventListener("keydown", (e) => {
+  if (e.repeat) return;
+  movement(e);
+});
+window.addEventListener("keyup", (e) => {
+  movement(e);
+});
+function movement(e) {
+  if (keys[e.key] !== undefined) {
+    keys[e.key] = e.type === "keydown";
+  }
+}
 //GAME
 //----------------------------------------------------------------------------
 function createBalls(nBalls) {
   for (let index = 0; index < nBalls; index++) {
     let radius = randomNumber(10, 20);
-    const ball = new Ball(randomNumber(radius, width - radius), randomNumber(radius, height - radius), randomNumber(-10, 10), randomNumber(-10, 10), randomColor(), radius, index);
+    const ball = new Ball(
+      randomNumber(radius, width - radius),
+      randomNumber(radius, height - radius),
+      randomNumber(-10, 10),
+      randomNumber(-10, 10),
+      randomColor(),
+      radius,
+      index
+    );
     balls.push(ball);
   }
+}
+function createPlayer(x, y, velocity, radius, playerNumber) {
+  const player = new Player(x, y, velocity, velocity, "black", radius, playerNumber);
+  players.push(player);
 }
 function gameLoop() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
@@ -141,6 +226,11 @@ function gameLoop() {
     ball.draw();
     ball.wallCollision();
     ball.updateMovement();
+  }
+  for (player of players) {
+    player.draw();
+    player.movePlayer();
+    player.eatBall();
   }
   requestAnimationFrame(gameLoop);
 }
