@@ -1,8 +1,13 @@
 //GLOBAL VARIABLES
 //----------------------------------------------------------------------------
+//game characters
 const balls = [];
 const players = [];
+//game timer
 let interval;
+let min;
+let elapsedTime;
+//movement
 const keys = {
   w: false,
   a: false,
@@ -18,6 +23,7 @@ const canvas = document.querySelector("canvas");
 const resetBtn = document.getElementById("resetBtn");
 const ballsRemaining = document.getElementById("ballsRemaining");
 const timer = document.getElementById("timer");
+const maxBalls = 2;
 // setup canvas ------------------------------------------------------
 const ctx = canvas.getContext("2d");
 let width;
@@ -31,7 +37,7 @@ startBtn.addEventListener("click", () => {
   width = canvas.width = window.innerWidth;
   height = canvas.height = window.innerHeight;
   startTimer();
-  createBalls(2);
+  createBalls(maxBalls);
   createPlayer(width / 2, height / 2, 8, 20, 1);
   ballCounter();
   gameLoop();
@@ -43,9 +49,9 @@ resetBtn.addEventListener("click", () => {
 //timer ------------------------------------------------------
 function startTimer() {
   let startTime = Date.now();
-  let min = 0;
+  min = 0;
   interval = setInterval(() => {
-    let elapsedTime = (Date.now() - startTime) / 1000;
+    elapsedTime = (Date.now() - startTime) / 1000;
     if (min < 1) {
       timer.innerHTML = `Timer: ${elapsedTime.toFixed(2)}`;
     } else {
@@ -60,10 +66,18 @@ function startTimer() {
 }
 function stopTimer() {
   clearInterval(interval);
+  if (min > 1) {
+    timer.innerHTML = `Completed in: ${min} minutes, ${elapsedTime.toFixed(2)} seconds.`;
+  } else if (min === 1) {
+    timer.innerHTML = `Completed in: ${min} minute, ${elapsedTime.toFixed(2)} seconds.`;
+  } else timer.innerHTML = `Completed in: ${elapsedTime.toFixed(2)} seconds.`;
 }
 // ball counter ------------------------------------------------------
 function ballCounter() {
   ballsRemaining.textContent = `Balls remaining: ${balls.length}`;
+}
+function ballCounterEnd() {
+  ballsRemaining.textContent = `All enemy balls destroyed!`;
 }
 
 //CLASSES
@@ -200,8 +214,8 @@ function movement(e) {
 }
 //GAME
 //----------------------------------------------------------------------------
-function createBalls(nBalls) {
-  for (let index = 0; index < nBalls; index++) {
+function createBalls(maxBalls) {
+  for (let index = 0; index < maxBalls; index++) {
     let radius = randomNumber(10, 20);
     const ball = new Ball(
       randomNumber(radius, width - radius),
@@ -231,6 +245,10 @@ function gameLoop() {
     player.draw();
     player.movePlayer();
     player.eatBall();
+  }
+  if (balls.length < 1) {
+    stopTimer();
+    ballCounterEnd();
   }
   requestAnimationFrame(gameLoop);
 }
