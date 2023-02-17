@@ -24,13 +24,13 @@ const resetBtn = document.getElementById("resetBtn");
 const ballsRemaining = document.getElementById("ballsRemaining");
 const timer = document.getElementById("timer");
 const maxBalls = 2;
-// setup canvas ------------------------------------------------------
+//setup canvas ------------------------------------------------------
 const ctx = canvas.getContext("2d");
 let width;
 let height;
 //start/reset ------------------------------------------------------
 resetBtn.style.display = "none";
-// START GAME
+//START GAME
 startBtn.addEventListener("click", () => {
   resetBtn.style.display = "";
   startBtn.style.display = "none";
@@ -72,7 +72,7 @@ function stopTimer() {
     timer.innerHTML = `Completed in: ${min} minute, ${elapsedTime.toFixed(2)} seconds.`;
   } else timer.innerHTML = `Completed in: ${elapsedTime.toFixed(2)} seconds.`;
 }
-// ball counter ------------------------------------------------------
+//ball counter ------------------------------------------------------
 function ballCounter() {
   ballsRemaining.textContent = `Balls remaining: ${balls.length}`;
 }
@@ -212,6 +212,7 @@ function movement(e) {
     keys[e.key] = e.type === "keydown";
   }
 }
+
 //GAME
 //----------------------------------------------------------------------------
 function createBalls(maxBalls) {
@@ -250,5 +251,7 @@ function gameLoop() {
     stopTimer();
     ballCounterEnd();
   }
-  requestAnimationFrame(gameLoop);
+  if (balls.length > 0) {
+    requestAnimationFrame(gameLoop);
+  }
 }
