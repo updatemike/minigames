@@ -17,13 +17,13 @@ const keys = {
 
 //HTML ELEMENTS
 //----------------------------------------------------------------------------
-//selectors
+//HTML selectors
 const startBtn = document.getElementById("startBtn");
 const canvas = document.querySelector("canvas");
 const resetBtn = document.getElementById("resetBtn");
 const ballsRemaining = document.getElementById("ballsRemaining");
 const timer = document.getElementById("timer");
-const maxBalls = 2;
+const maxBalls = 20;
 //setup canvas ------------------------------------------------------
 const ctx = canvas.getContext("2d");
 let width;
