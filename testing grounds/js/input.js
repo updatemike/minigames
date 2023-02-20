@@ -1,15 +1,12 @@
 export class InputHandler {
   constructor() {
-    this.keys = [];
+    this.keys = { w: false, a: false, s: false, d: false, spacebar: false };
     document.addEventListener("keydown", (e) => {
-      if ((e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d" || e.key === "space") && this.keys.indexOf(e.key) === -1) {
-        this.keys.push(e.key);
-      }
+      if (e.repeat) return;
+      this.keys[e.key] = true;
     });
     document.addEventListener("keyup", (e) => {
-      if (this.keys.indexOf(e.key) !== -1) {
-        this.keys.splice(this.keys.indexOf(e.key), 1);
-      }
+      this.keys[e.key] = false;
     });
   }
 }
