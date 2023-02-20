@@ -1,0 +1,25 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, cursive;
+}
+
+body {
+  background-color: rgb(58, 57, 57);
+  overflow: hidden;
+}
+
+h1,
+canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+img {
+  display: none;
+}
+h1 {
+  color: whitesmoke;
+}
