@@ -11,22 +11,23 @@ export class Player {
     this.maxSpeed = 7;
     this.speed = 0;
     //vertical movement
-    this.maxJumpSpeed = 20;
+    this.maxJumpSpeed = 30;
     this.jumpSpeed = 0;
   }
 
   update(input) {
-    //horizontal speed
+    //horizontal
     if (input.d === true && input.a === false) this.speed = this.maxSpeed;
     else if (input.a === true && input.d === false) this.speed = -this.maxSpeed;
-    else if (this.speed > 0.0001 || this.speed < 0.0001) this.speed *= 0.8;
+    else if (this.speed > 0.01 || this.speed < 0.01) this.speed *= 0.6;
     else this.speed = 0;
-
-    if (this.onGround() && input.w === true) {
+    //vertical
+    if (!this.onGround()) input.w = false;
+    if (input.w === true) {
       this.jumpSpeed = -this.maxJumpSpeed;
       input.w = false;
     } else if (this.y < this.game.height) {
-      this.jumpSpeed += 1;
+      this.jumpSpeed += 2;
     } else {
       this.jumpSpeed = 0;
     }

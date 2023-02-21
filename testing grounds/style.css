@@ -23,3 +23,7 @@ img {
 h1 {
   color: whitesmoke;
 }
+
+canvas {
+  border-bottom: 5px solid white;
+}

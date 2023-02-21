@@ -33,7 +33,7 @@ window.addEventListener("load", () => {
   function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     game.update();
-    game.toggleHitBoxes(ctx);
+    // game.toggleHitBoxes(ctx);
     game.draw(ctx);
 
     requestAnimationFrame(gameLoop);
